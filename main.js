@@ -35,7 +35,7 @@
 	fields.forEach(field => {
 		field.addEventListener('click', event => {
 
-			evalField(event);
+			evalField(event, game);
 		});
 	});
 	function disableRadioInput() {
@@ -43,7 +43,7 @@
 			marker.disabled = true
 		});
 	}
-	function evalField(event) {
+	function evalField(event, game) {
 		const filedValue = event.target.dataset.value;
 		const fieldLocation = event.target.dataset.field;
 		const field = event.target;
@@ -56,14 +56,14 @@
 		const marker = isComputerMove ? computerMarker : playerMarker;
 
 		//check if field is marked
-		if (!filedValue) {
+		if (!filedValue && !game.hasWinner) {
 			//mark field with a marker
 			field.dataset.value = marker;
 			field.classList.add(markingClasses[marker]);
 			game.userStep(event);
-			recordMove(fieldLocation, moves);
+			//recordMove(fieldLocation, moves);
 
-			if (isWinner(moves)) {
+			if (game.hasWinner) {
 				announceWinner();
 			} else {
 				isComputerMove = !isComputerMove;
@@ -270,38 +270,8 @@
 	 */
 	function isWinner(moves) {
 		//check rows for sum
-		let rowSum;
-		let colSum = [0, 0, 0];
-		let diagonalDown = 0;
-		let diagonalUp = 0;
+		return game.isWinner(moves);
 
-		for (let row = 0; row < 3; row++) {
-			rowSum = 0;
-
-			for (let col = 0; col < 3; col++) {
-
-				rowSum = rowSum + moves[row][col];
-				colSum[col] = colSum[col] + moves[row][col];
-
-				if (col === row) {
-					diagonalDown = diagonalDown + moves[row][col];
-				}
-
-				if ((col === 0 && row === 2)
-					|| (col === 1 && row === 1)
-					|| (col === 2 && row === 0)) {
-					diagonalUp = diagonalUp + moves[row][col];
-				}
-
-			}
-			if (3 === rowSum
-				|| (colSum.findIndex(el => el === 3) > -1)
-				|| diagonalDown === 3
-				|| diagonalUp === 3) {
-				return true;
-			}
-		}
-		return false
 	}
 
 
