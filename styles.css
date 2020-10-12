@@ -1,0 +1,57 @@
+.markers{
+    font-family: sans-serif;
+    margin-bottom: 20px;
+}
+.row{
+    display: flex;
+    padding:0;
+    margin: 0;
+}
+.field{
+    padding: 20px;
+    font-size: 18px;
+    position: relative;
+}
+.field:hover{
+    background: #c6c6c6;
+    cursor: pointer;
+}
+.disabled{
+    display: none;
+}
+.row .field{
+    border-right: 1px solid black;
+    border-top: 1px solid black ;
+    width: 30px;
+    font-family: sans-serif;
+}
+
+.row .field:last-child{
+    border-right: none;
+}
+.board .row:first-child .field{
+    border-top: none;
+}
+
+.field.marked-null:after{
+    position: absolute;
+    content: '0';
+    top: 25%;
+    right: 41%;
+}
+
+.field.marked-null:after{
+    position: absolute;
+    content: '0';
+    top: 25%;
+    right: 41%;
+}
+.field.marked-rist:after{
+    position: absolute;
+    content: 'X';
+    top: 25%;
+    right: 41%;
+
+}
+
+
