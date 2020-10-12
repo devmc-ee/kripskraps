@@ -38,14 +38,21 @@
 			evalField(event, game);
 		});
 	});
+
 	function disableRadioInput() {
 		markers.forEach(marker => {
 			marker.disabled = true
 		});
 	}
+
 	function evalField(event, game) {
+
+		if (game.countedSteps >= game.maxAvailableSteps
+			|| game.hasWinner) {
+			return false;
+		}
+
 		const filedValue = event.target.dataset.value;
-		const fieldLocation = event.target.dataset.field;
 		const field = event.target;
 		//view
 		const markingClasses = {
@@ -65,16 +72,18 @@
 
 			if (game.hasWinner) {
 				announceWinner();
-			} else {
-				isComputerMove = !isComputerMove;
-
-				if (isComputerMove) {
-					makeComputerMove();
-					if (isWinner(computerMoves)) {
-						announceWinner();
-					}
-				}
 			}
+			// else
+			// 	{
+			// 	isComputerMove = !isComputerMove;
+			//
+			// 	if (isComputerMove) {
+			// 		makeComputerMove();
+			// 		if (isWinner(computerMoves)) {
+			// 			announceWinner();
+			// 		}
+			// 	}
+			// }
 
 		}
 	}

@@ -5,8 +5,8 @@ const KripsKraps = function () {
 		[0, 0, 0], [0, 0, 0], [0, 0, 0]
 	];
 	this.userSteps = this.computerSteps = this.boardSteps;
-	this.gameStepsCount = 0;
-	this.gameStepsCountMax = 9// max === 9
+	this.countedSteps = 0;
+	this.maxAvailableSteps = 9// max === 9
 	this.hasWinner = false;
 	/**
 	 *
@@ -54,8 +54,8 @@ const KripsKraps = function () {
 		const row = parseInt(fieldLocation[0]);
 		const col = parseInt(fieldLocation[1]);
 		this.saveStep(row, col);
-
-		this.gameStepsCount++;
+		this.isWinner(this.userSteps);
+		this.countedSteps++;
 	};
 
 	/**
