@@ -3,22 +3,14 @@
 	const fields = document.querySelectorAll('.field');
 	const markers = document.getElementsByName('userMarker');
 	const noteAlertBox = document.querySelector('.note');
-	const markerOptions = ['x', '0'];
 
+	const markerOptions = ['x', '0'];
 	let playerMarker = '';
 	let computerMarker = '';
 	let isComputerMove = false; //defines whose game now
+
 	const game = new KripsKraps();
 
-	let boardStatus = [
-		[0, 0, 0], [0, 0, 0], [0, 0, 0]
-	];
-	let playerMoves = [
-		[0, 0, 0], [0, 0, 0], [0, 0, 0]
-	];
-	let computerMoves = [
-		[0, 0, 0], [0, 0, 0], [0, 0, 0]
-	];
 
 	//Add listeners to radio buttons for selecting marker fields
 	markers.forEach(marker => {
@@ -63,16 +55,20 @@
 		const marker = isComputerMove ? computerMarker : playerMarker;
 
 		//check if field is marked
-		if (!filedValue && !game.hasWinner) {
-			//mark field with a marker
+		if (!filedValue ) {
+			//mark field with a user marker
 			field.dataset.value = marker;
 			field.classList.add(markingClasses[marker]);
-			game.userStep(event);
-			//recordMove(fieldLocation, moves);
+
+			game.makeUserStep(event);
 
 			if (game.hasWinner) {
 				announceWinner();
+				return true;
 			}
+
+			game.makeComputerStep();
+
 			// else
 			// 	{
 			// 	isComputerMove = !isComputerMove;
@@ -124,22 +120,7 @@
 		isComputerMove = !isComputerMove;
 	}
 
-	function findAnyEmptyField() {
-		return game(findAnyEmptyFieldOn)
-		for (let row = 0; row < 3; row++) {
-			for (let col = 0; col < 3; col++) {
-				let emptyCol = boardStatus[row].findIndex(el => el === 0);
-				if (emptyCol > -1) {
-					computerMoves[row][emptyCol] = 1;
-					boardStatus[row][emptyCol] = 1;
-					return '' + row + emptyCol;
 
-				}
-			}
-
-		}
-		return false;
-	}
 
 	function findEmptyOnTheRoute(route = '') {
 		let nextMove = false;
@@ -241,10 +222,6 @@
 		return sumPlayer === sumComp;
 	}
 
-	function addListenersToBoardFields() {
-
-	}
-
 	function announceWinner() {
 		const winnerName = isComputerMove ? 'Computer ' : 'Congrats! You ';
 		const winnerClass = isComputerMove ? 'fail' : 'success';
@@ -254,34 +231,9 @@
 		noteAlertBox.innerText = winnerName + ' win!'
 	}
 
-	/**
-	 *  Define players markers
-	 */
-	function addListenersToMarkerSlect() {
 
-	}
 
-	/**
-	 * Saves user moves into array
-	 * @param value
-	 * @param moves
-	 */
-	function recordMove(value, moves) {
-		const row = parseInt(value[0]) - 1;
-		const col = parseInt(value[1]) - 1;
 
-		moves[row][col] = 1;
-		boardStatus[row][col] = 1;
-	}
-
-	/**
-	 * Checks if the current player is winner
-	 */
-	function isWinner(moves) {
-		//check rows for sum
-		return game.isWinner(moves);
-
-	}
 
 
 //['','','']
