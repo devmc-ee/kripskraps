@@ -53,5 +53,18 @@
     right: 41%;
 
 }
+.note{
+    margin-top: 20px;
+    padding: 20px 10px;
 
-
+    max-width: 300px;
+    border-radius: 6px;
+    text-align: center;
+    color: white;
+}
+.success{
+    background-color: green;
+}
+.fail{
+    background-color: red;
+}
