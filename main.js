@@ -9,8 +9,7 @@
 	let computerMarker = '';
 	let isComputerMove = false; //defines whose game now
 	const game = new KripsKraps()
-	console.log((game.playerMoves));
-	debugger
+
 	let boardStatus = [
 		[0, 0, 0], [0, 0, 0], [0, 0, 0]
 	];
@@ -24,9 +23,16 @@
 	//Add listeners to radio buttons for selecting marker fields
 	addListenersToMarkerSlect();
 
-	addListenersToBoardFields();
+	fields.forEach(field => {
+		field.addEventListener('click', e => {
+			const value = e.target.dataset.value;
+			const fieldLocation = e.target.dataset.field;
+			evalField(e.target, value, fieldLocation);
+		});
+	});
 
 	function evalField(field, value, fieldLocation) {
+		//view
 		const markingClasses = {
 			"x": "marked-rist",
 			"0": "marked-null"
@@ -49,7 +55,9 @@
 
 				if (isComputerMove) {
 					makeComputerMove();
-
+					if (isWinner(computerMoves)) {
+						announceWinner();
+					}
 				}
 			}
 
@@ -93,7 +101,7 @@
 	}
 
 	function findAnyEmptyField() {
-
+		return game(findAnyEmptyFieldOn)
 		for (let row = 0; row < 3; row++) {
 			for (let col = 0; col < 3; col++) {
 				let emptyCol = boardStatus[row].findIndex(el => el === 0);
@@ -112,44 +120,8 @@
 	function findEmptyOnTheRoute(route = '') {
 		let nextMove = false;
 		let emptyRow = 0;
-		 debugger
-		switch (route) {
-			case 'r0':
-			case'r1':
-			case'r2':
-
-				emptyRow = boardStatus[route[1]].findIndex(el => el === 0);
-				if (emptyRow > -1) {
-					computerMoves[route[1]][emptyRow] = 1;
-					boardStatus[route[1]][emptyRow] = 1;
-					nextMove = '' + route[1] + emptyRow;
-				}
 
 
-				break;
-			case 'c0':
-			case 'c1':
-			case 'c2':
-
-				for (let i = 0; i < 3; i++) {
-					let empty = boardStatus[route[1]].findIndex(el => el === 0);
-					if (empty > -1) {
-
-						computerMoves[i][empty] = 1;
-						boardStatus[i][empty] = 1;
-						nextMove = '' + i + route[1];
-						break;
-					}
-				}
-
-				break;
-			case 'dDown':
-			case 'dUp':
-				break;
-			default:
-				return findAnyEmptyField()
-
-		}
 		return !nextMove ? findAnyEmptyField() : nextMove
 
 	}
@@ -246,13 +218,7 @@
 	}
 
 	function addListenersToBoardFields() {
-		fields.forEach(field => {
-			field.addEventListener('click', e => {
-				const value = e.target.dataset.value;
-				const fieldLocation = e.target.dataset.field;
-				evalField(e.target, value, fieldLocation);
-			});
-		});
+
 	}
 
 	function announceWinner() {
