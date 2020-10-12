@@ -4,10 +4,13 @@
 	const markers = document.getElementsByName('userMarker');
 	const noteAlertBox = document.querySelector('.note');
 	const markerOptions = ['x', '0'];
+
 	let playerMarker = '';
 	let computerMarker = '';
 	let isComputerMove = false; //defines whose game now
-
+	const game = new KripsKraps()
+	console.log((game.playerMoves));
+	debugger
 	let boardStatus = [
 		[0, 0, 0], [0, 0, 0], [0, 0, 0]
 	];
@@ -78,10 +81,9 @@
 		const maxTests = 8;
 		let test = 0;
 		let nextMove;
-		while (!isRouteAvailable(bestRoute) &&
-		test < maxTests) {
+		while (!isRouteAvailable(bestRoute)
+		&& test < maxTests) {
 			bestRoute = findTheBestRoute(routesScores, bestRoute);
-
 			test++;
 		}
 		nextMove = findEmptyOnTheRoute(bestRoute);
@@ -110,7 +112,7 @@
 	function findEmptyOnTheRoute(route = '') {
 		let nextMove = false;
 		let emptyRow = 0;
-		// debugger
+		 debugger
 		switch (route) {
 			case 'r0':
 			case'r1':
@@ -214,7 +216,7 @@
 		//check if the route is free
 
 		switch (route) {
-			case 'r0':
+			case'r0':
 			case'r1':
 			case'r2':
 
@@ -240,10 +242,7 @@
 				return true;
 
 		}
-
-
 		return sumPlayer === sumComp;
-
 	}
 
 	function addListenersToBoardFields() {
