@@ -1,14 +1,11 @@
 const KripsKraps = function () {
 
-	this.markerOptions = ['x', '0'];
-	this.playerMarker = '';
-	this.computerMarker = '';
 	this.isComputerStep = false; //defines whose game now
 	this.boardSteps = [
 		[0, 0, 0], [0, 0, 0], [0, 0, 0]
 	];
-	this.playerSteps = this.computerSteps = this.boardSteps;
-	this.gameStepsCount = 0;
+	this.userSteps = this.computerSteps = this.boardSteps;
+	this.gameStepsCount = 0;// max === 9
 
 	/**
 	 *
@@ -24,10 +21,8 @@ const KripsKraps = function () {
 
 					this.saveStep(row, emptyCol);
 					return '' + row + emptyCol;
-
 				}
 			}
-
 		}
 		return false;
 	};
@@ -36,8 +31,25 @@ const KripsKraps = function () {
 		this.boardSteps[row][col] = 1;
 		if (this.isComputerStep) {
 			this.computerSteps[row][col] = 1;
-		}else{
-			this.playerSteps[row][col] = 1
+		} else {
+			this.userSteps[row][col] = 1
 		}
+	};
+
+	this.userStep = function (event) {
+		this.isComputerStep = false;
+
+		const fieldLocation = event.target.dataset.field;
+		const row = parseInt(fieldLocation[0]);
+		const col = parseInt(fieldLocation[1]);
+		this.saveStep(row, col)
+
+		console.log('STEP: ', this.userSteps)
+		this.gameStepsCount++;
+	};
+
+	this.checkWin = function (steps) {
+
 	}
+
 };

@@ -8,7 +8,7 @@
 	let playerMarker = '';
 	let computerMarker = '';
 	let isComputerMove = false; //defines whose game now
-	const game = new KripsKraps()
+	const game = new KripsKraps();
 
 	let boardStatus = [
 		[0, 0, 0], [0, 0, 0], [0, 0, 0]
@@ -21,17 +21,32 @@
 	];
 
 	//Add listeners to radio buttons for selecting marker fields
-	addListenersToMarkerSlect();
+	markers.forEach(marker => {
+		marker.addEventListener('click', e => {
+			playerMarker = e.target.value;
+			disableRadioInput();
+			const markerIndex = markerOptions.findIndex(el => el === playerMarker);
+			computerMarker = markerOptions[1 - markerIndex];
+			board.classList.remove('disabled');
 
-	fields.forEach(field => {
-		field.addEventListener('click', e => {
-			const value = e.target.dataset.value;
-			const fieldLocation = e.target.dataset.field;
-			evalField(e.target, value, fieldLocation);
-		});
+		})
 	});
 
-	function evalField(field, value, fieldLocation) {
+	fields.forEach(field => {
+		field.addEventListener('click', event => {
+
+			evalField(event);
+		});
+	});
+	function disableRadioInput() {
+		markers.forEach(marker => {
+			marker.disabled = true
+		});
+	}
+	function evalField(event) {
+		const filedValue = event.target.dataset.value;
+		const fieldLocation = event.target.dataset.field;
+		const field = event.target;
 		//view
 		const markingClasses = {
 			"x": "marked-rist",
@@ -39,13 +54,13 @@
 		};
 
 		const marker = isComputerMove ? computerMarker : playerMarker;
-		const moves = isComputerMove ? computerMoves : playerMoves;
+
 		//check if field is marked
-		if (!value) {
+		if (!filedValue) {
 			//mark field with a marker
 			field.dataset.value = marker;
 			field.classList.add(markingClasses[marker]);
-
+			game.userStep(event);
 			recordMove(fieldLocation, moves);
 
 			if (isWinner(moves)) {
@@ -234,18 +249,7 @@
 	 *  Define players markers
 	 */
 	function addListenersToMarkerSlect() {
-		markers.forEach(marker => {
-			marker.addEventListener('click', e => {
-				playerMarker = e.target.value;
 
-				const markerIndex = markerOptions.findIndex(el => el === playerMarker);
-
-				computerMarker = markerOptions[1 - markerIndex];
-				//enable game board
-				board.classList.remove('disabled');
-
-			})
-		});
 	}
 
 	/**
