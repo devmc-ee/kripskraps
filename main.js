@@ -37,7 +37,7 @@
 	}
 
 	/**
-	 * Callback in event listerner on click event
+	 * Callback in event listener on click event
 	 *
 	 * @param event
 	 * @param game
@@ -100,6 +100,7 @@
 		const newRoute = '' + (parseInt(route[0])) + (parseInt(route[1]));
 
 		const fieldToMark = document.querySelector('.field' + newRoute);
+
 		fieldToMark.dataset.value = marker;
 		fieldToMark.classList.add(markingClasses[marker]);
 	}
