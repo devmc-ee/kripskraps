@@ -13,26 +13,7 @@ const KripsKraps = function () {
 	this.countedSteps = 0;
 	this.maxAvailableSteps = 9;
 	this.hasWinner = false;
-
-	/**
-	 *
-	 * @param board
-	 * @returns {string|boolean}
-	 */
-	this.findAnyEmptyFieldOn = function (board) {
-
-		for (let row = 0; row < 3; row++) {
-			for (let col = 0; col < 3; col++) {
-				let emptyCol = board[row].findIndex(el => el === 0);
-				if (emptyCol > -1) {
-
-					this.saveStep(row, emptyCol);
-					return '' + row + emptyCol;
-				}
-			}
-		}
-		return false;
-	};
+	this.compWinningRoutes = [];
 
 	/**
 	 * Save current step into player board and common board
@@ -49,7 +30,7 @@ const KripsKraps = function () {
 	};
 
 	/**
-	 * save user step & checks for win
+	 * save user step & check for win
 	 * @param event
 	 */
 	this.makeUserStep = function (event) {
@@ -66,7 +47,7 @@ const KripsKraps = function () {
 	};
 
 	/**
-	 *
+	 * Check for Winner
 	 * @param steps
 	 * @returns {boolean}
 	 */
@@ -106,38 +87,156 @@ const KripsKraps = function () {
 				return true;
 			}
 		}
+
 		this.hasWinner = false;
 		return false;
 
 	};
 
-
+	/**
+	 * Compute comp step and define if it is a winner
+	 * @returns {string}
+	 */
 	this.makeComputerStep = function () {
+		let compStep = '';
 		this.isComputerStep = true;
-		console.log('Computer Step', this.getWinningRoutes());
+		if (this.countedSteps === 1 &&
+			this.allSteps[1][1] === 0) {
+			this.saveStep(1, 1);
+
+			return '11'
+		} else {
+			this.compWinningRoutes = this.getWinningRoutes();
+			compStep = this.defineStepRoute();
+			this.saveStep(parseInt(compStep[0]), parseInt(compStep[1]));
+			this.isWinner(this.computerSteps);
+			return compStep;
+
+		}
+
 	};
 
+	/**
+	 * Find optimal (at least, less expensive) way, step
+	 * @returns {string|boolean}
+	 */
+	this.defineStepRoute = function () {
+		let minScoreKey = '';
+		let minScoreValue = 0;
+		let route;
+		for (let key in this.compWinningRoutes) {
+			if (this.compWinningRoutes[key] > minScoreValue) {
+				minScoreKey = key;
+			}
+
+		}
+
+		route = this.findEmptyFieldOn(this.allSteps, minScoreKey);
+
+		return route;
+	};
+
+	/**
+	 * Find Empty (available) field (step)
+	 *
+	 * @returns {string|boolean}
+	 * @param steps
+	 * @param direction
+	 */
+	this.findEmptyFieldOn = function (steps, direction) {
+		let route = '';
+
+		switch (direction) {
+			case'r0':
+			case'r1':
+			case'r2':
+
+			case 'c1':
+			case 'c2':
+			case 'c3':
+
+				for (let row = 0; row < 3; row++) {
+					for (let col = 0; col < 3; col++) {
+						if (steps[row][col] === 0) {
+							route = '' + row + col;
+							break
+						}
+					}
+				}
+				break;
+			case 'dUp':
+
+				for (let row = 0; row < 3; row++) {
+					for (let col = 0; col < 3; col++) {
+						//diagonalUp
+						if ((col === 0 && row === 2)
+							|| (col === 1 && row === 1)
+							|| (col === 2 && row === 0)) {
+							if (steps[row][col] === 0) {
+								route = '' + row + col;
+								break
+							}
+						}
+
+					}
+				}
+				break;
+			case 'dDown':
+
+				for (let row = 0; row < 3; row++) {
+					for (let col = 0; col < 3; col++) {
+						if (col === row &&
+							steps[row][col] === 0) {
+							route = '' + row + col;
+						}
+
+					}
+				}
+				break;
+			default:
+				for (let row = 0; row < 3; row++) {
+					for (let col = 0; col < 3; col++) {
+						if (steps[row][col] === 0) {
+							route = '' + row + col;
+							break
+						}
+					}
+				}
+
+		}
+		return route;
+	};
+
+	/**
+	 * Define winning routes: those that have less enemy steps (empty)
+	 * @returns {*|[]}
+	 */
 	this.getWinningRoutes = function () {
 		let winningRoutes = [];
-		let emptyRoutes = [];
+
 
 		let dUp = [];
 		let dDown = [];
-
+		let dCompUp = [];
+		let dCompDown = [];
 		//check rows
 		for (let row = 0; row < 3; row++) {
 
-			let column = [];
+			let columnEmpty = [];
+			let columnComp = [];
 			//find empty rows
-			emptyRoutes = this.pushEmptyArray(this.userSteps[row], emptyRoutes, 'r', row);
 
+			winningRoutes = this.checkRouteForWin(this.userSteps[row], this.computerSteps[row],
+				'r', row, winningRoutes);
 			//check cols, dUp,dDown
 			for (let col = 0; col < 3; col++) {
-				column.push(this.userSteps[col][row]);
+				columnEmpty.push(this.userSteps[col][row]);
+				columnComp.push(this.computerSteps[col][row]);
 
 				//calc diagonalDown
 				if (col === row) {
 					dDown.push(this.userSteps[col][row]);
+					dCompDown.push(this.computerSteps[col][row])
 				}
 
 				//diagonalUp
@@ -145,43 +244,62 @@ const KripsKraps = function () {
 					|| (row === 1 && col === 1)
 					|| (row === 2 && col === 0)) {
 					dUp.push(this.userSteps[col][row]);
+					dCompUp.push(this.computerSteps[col][row])
 				}
 			}
 
 			//find empty cols
-			emptyRoutes = this.pushEmptyArray(column, emptyRoutes, 'c', row);
+			winningRoutes = this.checkRouteForWin(columnEmpty, columnComp, 'c', row, winningRoutes);
 		}
 		//find empty dUp
-		emptyRoutes = this.pushEmptyArray(dUp, emptyRoutes, 'dUp');
 
+		winningRoutes = this.checkRouteForWin(dUp, dCompUp, 'dUp', '', winningRoutes);
 		//find empty dDown
-		emptyRoutes = this.pushEmptyArray(dDown, emptyRoutes, 'dDown');
 
-		if (emptyRoutes.length === 0) console.log('No Empty')
+		winningRoutes = this.checkRouteForWin(dDown, dCompDown, 'dDown', '', winningRoutes);
 
-		//find the smallest routes
-
-		return emptyRoutes;
+		return winningRoutes;
 	};
+
 	/**
-	 * Compare empty routes and computer steps to find the smallest routes
-	 * @param emptyRoutes
+	 * set winning score: the less number, the better route- has already own steps,
+	 * so less steps for win
+	 * @param userStepsArray
+	 * @param compStepsArray
+	 * @param directionCode
+	 * @param index
+	 * @param winningRoutes
+	 * @returns {*}
 	 */
-	this.getSmallestRoutes = function (emptyRoutes) {
-		const length = emptyRoutes.length;
-		// for(let )
-	};
-
-	this.pushEmptyArray = function (array, emptyRoutes, code, index = '') {
-		const maxArrValue = this.maxInArray(array);
-		if (maxArrValue < 1) {
-			emptyRoutes.push(code + index);
+	this.checkRouteForWin = function (userStepsArray, compStepsArray, directionCode, index = '', winningRoutes) {
+		if (this.isEmptyRoute(userStepsArray)) {
+			winningRoutes[directionCode + index] = (3 - this.sumArray(compStepsArray));
 		}
-		return emptyRoutes;
+		return winningRoutes;
 	};
 
+	/**
+	 * Return Max value in array
+	 * Helps to define if array (route) has steps of opponent
+	 * @param array
+	 * @returns {*}
+	 */
 	this.maxInArray = function (array) {
 		return array.reduce((com, cur) => Math.max(com, cur));
+	};
+
+	/**
+	 * Defines if route (array) is empty or not.
+	 * @param route
+	 * @returns {boolean}
+	 */
+	this.isEmptyRoute = function (route) {
+		const maxArrValue = this.maxInArray(route);
+		return maxArrValue < 1;
+	};
+
+	this.sumArray = function (array) {
+		return array.reduce((com, cur) => com + cur);
 	}
 };
 
